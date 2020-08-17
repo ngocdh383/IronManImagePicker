@@ -1,0 +1,2 @@
+include ':app', ':ironmanimagepicker'
+rootProject.name='Example'
