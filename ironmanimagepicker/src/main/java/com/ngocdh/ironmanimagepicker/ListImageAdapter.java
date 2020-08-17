@@ -1,10 +1,12 @@
 package com.ngocdh.ironmanimagepicker;
 
 import android.content.Context;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
@@ -21,12 +23,17 @@ public class ListImageAdapter extends RecyclerView.Adapter<ListImageAdapter.MyVi
 
     private ArrayList data;
     private Context context;
+    private int mItemWidth;
 
     private final String TAG = "ahihi-" + ListImageAdapter.class.getSimpleName();
 
-    ListImageAdapter(Context context, ArrayList data) {
+    ListImageAdapter(Context context, ArrayList data, int itemCount) {
         this.data = data;
         this.context = context;
+        WindowManager windowManager = ((WindowManager) context.getSystemService(Context.WINDOW_SERVICE));
+        DisplayMetrics displayMetrics = new DisplayMetrics();
+        windowManager.getDefaultDisplay().getRealMetrics(displayMetrics);
+        this.mItemWidth = (displayMetrics.widthPixels / itemCount);
     }
 
     @NonNull
@@ -40,12 +47,11 @@ public class ListImageAdapter extends RecyclerView.Adapter<ListImageAdapter.MyVi
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
         String url = (String) this.data.get(position);
         Log.d(TAG, "onBindViewHolder: " + url);
-        RequestOptions requestOptions = new RequestOptions();
-        requestOptions = requestOptions.transforms(new CenterCrop(), new RoundedCorners(16));
         Glide.with(this.context).load(url)
                 .centerCrop()
                 .placeholder(R.drawable.ic_image_place_holder)
-                .apply(requestOptions)
+                .error(R.drawable.ic_image)
+                .override(this.mItemWidth, this.mItemWidth)
                 .into(holder.mImgItem);
     }
 
